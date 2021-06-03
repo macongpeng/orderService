@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 @RestController
 public class OrderController {
 
-    private OrderRepository orderRepository;
-    private ProductServiceClient productServiceClient;
+    private final OrderRepository orderRepository;
+    private final ProductServiceClient productServiceClient;
 
     @Autowired
     public OrderController(OrderRepository orderRepository, ProductServiceClient productServiceClient) {
@@ -27,7 +27,7 @@ public class OrderController {
     @GetMapping("/orders")
     public List<CustomerOrderDetails> getCustomerOrders(@RequestParam String customerId) {
         final List<Order> order = orderRepository.findByCustomerId(customerId);
-        return order.stream().map(o -> toCustomerOrderDetails(o)).collect(Collectors.toList());
+        return order.stream().map(this::toCustomerOrderDetails).collect(Collectors.toList());
     }
 
     @GetMapping("/orders/{id}")
@@ -49,7 +49,7 @@ public class OrderController {
     }
 
     private List<com.grandia.orderService.dto.product.Item> toItemList(List<Item> items) {
-        return items.stream().map(item -> toItemDto(item)).collect(Collectors.toList());
+        return items.stream().map(this :: toItemDto).collect(Collectors.toList());
     }
 
     private com.grandia.orderService.dto.product.Item toItemDto(Item item) {
